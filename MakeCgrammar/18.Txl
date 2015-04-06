@@ -1,11 +1,17 @@
 % Grammar:
-
+#pragma -comment
 define program
-	% [repeat include_statement]
+        [repeat include_statement]
+	[NL]
 	[c_function]
 end define
 
+define include_statement
+ 	'#[SPOFF] [id] [SPON] '< [SPOFF] [id] '. [id] '> [SPON][NL]      
+end define
+
 define c_function
+	[comment_statement] [NL]
 	[function_head] [NL]
 	{ [NL][IN]
 	  [repeat function_body]
@@ -32,6 +38,15 @@ define function_body
 	| [repeat while_loop] [NL]
 	| [repeat do_while_loop] [NL]
 	| [return_statement] [NL]
+	| [comment_statement]
+end define
+
+define comment_statement
+	[repeat comment_nl]
+end define
+
+define comment_nl
+	[comment] [NL]
 end define
 
 define return_type
@@ -93,15 +108,15 @@ end define
  
 define if_statement
 	if ( [conditions] ) [NL]
-	[opt begin_bracket]
-    	[repeat function_body] [opt break_statement] [EX]
-	[opt end_bracket]
+	[opt begin_bracket] [IN]
+    	[repeat function_body] [opt break_statement]
+	[EX] [opt end_bracket]
 	[opt else_statement]
 end define
 
 define else_statement
 	else [NL]
-	[opt begin_bracket]
+	[opt begin_bracket][IN]
     	[repeat function_body] [EX]
 	[opt end_bracket]
 end define
@@ -168,8 +183,8 @@ end define
 define while_loop
 	while ( [expression] ) [NL]
 	[begin_bracket] [IN]
-	[repeat function_body] [EX]
-	[end_bracket]
+	[repeat function_body]
+	[EX] [end_bracket]
 end define
 
 define do_while_loop
@@ -184,14 +199,10 @@ define break_statement
 	break; [NL]
 end define
 
-% comments
-%    //
-%    /* */
-% end comments
-
-% define include_statement
-% 	[SPOFF] '#include [SPON] < [SPOFF] [id] . [id] > [SPON] [NL]
-% end define
+comments
+	/* */
+	//
+end comments
 
 % Rules:
 function main
